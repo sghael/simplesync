@@ -4,12 +4,15 @@ import sys
 import signal
 import subprocess
 import argparse
+import configparser
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
-# Constants
-DEF_IGNORED_DIRS = ["wandb", ".git", ".vscode", "models"]
-DEF_IGNORED_FILES = [".DS_Store", ".gitignore", "*.log", ".env"]
+cfg = configparser.ConfigParser()
+cfg.read('simplesync.example.cfg')
+
+ignored_dirs_from_cfg = [i.strip() for i in cfg.get('settings', 'ignored_dirs').split(',')]
+ignored_files_from_cfg = [i.strip() for i in cfg.get('settings', 'ignored_files').split(',')]
 
 
 def get_parser_args():
@@ -46,7 +49,7 @@ class SyncOnChanges(FileSystemEventHandler):
     """Handles events where a file system change occurs."""
 
     def __init__(
-        self, args, ignored_dirs=DEF_IGNORED_DIRS, ignored_files=DEF_IGNORED_FILES
+        self, args, ignored_dirs=ignored_dirs_from_cfg, ignored_files=ignored_files_from_cfg
     ):
         """Initializes the SSH connection and prepares for file sync."""
 
