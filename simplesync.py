@@ -68,6 +68,8 @@ class SyncOnChanges(FileSystemEventHandler):
         ssh_process_list = [
             "ssh",
             "-T",
+            "-l",
+            self.args.remoteuser,
             "-p",
             str(self.args.remoteport),
             "-o",
